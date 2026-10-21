@@ -1,0 +1,113 @@
+/* ==========================================================================
+   sidebar.css  -  Side navigation (BEM: .app-sidebar) and page offset
+   Requires tokens.css.
+   Below 768px:  hidden until the logo button is tapped, then a narrow icon-only
+                 rail. Hovering or focusing an icon shows its label.
+   768px+:       always visible, icons + labels.
+   ========================================================================== */
+.app-sidebar {
+  position: fixed;
+  top: calc(var(--navbar-height) + env(safe-area-inset-top, 0px));
+  bottom: 0;
+  left: 0;
+  z-index: 30;
+  box-sizing: border-box;
+  width: var(--sidebar-rail-width);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  background: var(--color-surface);
+  border-right: 1px solid var(--color-border);
+  transform: translateX(-100%);
+  visibility: hidden;                 /* keeps hidden links out of the tab order */
+  transition: transform 0.2s ease, visibility 0s linear 0.2s;
+}
+.app-sidebar.is-open {
+  transform: none;
+  visibility: visible;
+  transition: transform 0.2s ease, visibility 0s;
+}
+.app-sidebar__nav {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  padding: 8px 0;
+}
+.app-sidebar__list { display: flex; flex-direction: column; gap: 2px; margin: 0; padding: 0; list-style: none; }
+
+.app-sidebar__link {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 44px;
+  color: var(--color-text-muted);
+  text-decoration: none;
+  transition: color 0.15s, background 0.15s;
+}
+.app-sidebar__link:hover { color: var(--color-text); }
+.app-sidebar__icon { width: 16px; height: 16px; }
+.app-sidebar__label { font-size: 15px; font-weight: 500; }
+
+/* Current page: brand color with a bar on the left edge */
+.app-sidebar__link--active { color: var(--color-brand); }
+.app-sidebar__link--active::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 8px;
+  bottom: 8px;
+  width: 3px;
+  background: var(--color-brand);
+}
+
+/* Below 768px the label is a tooltip to the right of the icon.
+   It stays in the page (opacity only), so screen readers still read it. */
+@media (max-width: 767px) {
+  .app-sidebar__label {
+    position: absolute;
+    top: 50%;
+    left: calc(100% + 8px);
+    z-index: 1;
+    padding: 4px 8px;
+    border-radius: 6px;
+    background: var(--color-text);
+    color: var(--color-bg);
+    font-size: 12px;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(-50%);
+    transition: opacity 0.15s;
+  }
+  .app-sidebar__link:hover .app-sidebar__label,
+  .app-sidebar__link:focus-visible .app-sidebar__label { opacity: 1; }
+}
+
+/* ---------- Page content: sits below the fixed navbar, beside the sidebar ---------- */
+.app-content { padding-top: var(--navbar-height); }
+
+@media (min-width: 768px) {
+  .app-sidebar {
+    width: var(--sidebar-width);
+    transform: none;
+    visibility: visible;
+    transition: none;
+  }
+  .app-sidebar__nav { padding: 12px 0; }
+  .app-sidebar__link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: auto;
+    margin: 0 8px;
+    padding: 0 12px;
+    border-radius: var(--radius-control);
+  }
+  .app-sidebar__link:hover { background: var(--color-bg); }
+  .app-sidebar__icon { width: 18px; height: 18px; flex: none; }
+  .app-sidebar__link--active {
+    background: color-mix(in srgb, var(--color-brand) 10%, transparent);
+  }
+  .app-sidebar__link--active::before { display: none; }
+  .app-content { padding-left: var(--sidebar-width); }
+}

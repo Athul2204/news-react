@@ -1,0 +1,57 @@
+/* ==========================================================================
+   article.css  -  Single story page (main content only). Requires tokens.css.
+   ========================================================================== */
+.article { box-sizing: border-box; min-width: 0; max-width: 46rem; padding: 16px var(--space-page-x) 8px; }
+.article__back {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 40px;
+  margin-bottom: 8px;
+  color: var(--color-text-muted);
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+}
+.article__back:hover { color: var(--color-text); text-decoration: underline; text-underline-offset: 3px; }
+.article__category { display: flex; align-items: center; gap: 6px; margin: 0 0 8px; font-size: 13px; font-weight: 600; color: var(--color-text-muted); }
+.article__category::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: hsl(var(--hue) 80% 55%); }
+.article__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  overflow-wrap: anywhere;
+}
+.article__title:focus { outline: none; }
+.article__meta { display: flex; flex-wrap: wrap; gap: 2px 12px; margin: 10px 0 16px; font-size: 13px; color: var(--color-text-muted); }
+.article__image { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 14px; background: var(--color-border); }
+.article__lead { margin: 20px 0 0; font-size: 18px; font-weight: 500; line-height: 1.5; }
+.article__text { margin: 16px 0 0; font-size: 16px; line-height: 1.7; }
+.article__save {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 40px;
+  margin: 0 0 16px;
+  padding: 0 16px;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-control);
+  background: transparent;
+  color: var(--color-text);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+.article__save:hover { border-color: var(--color-text-muted); }
+.article__save.is-saved { border-color: var(--color-brand); color: var(--color-brand); }
+.article__save:focus-visible { outline: 3px solid var(--color-focus); outline-offset: 2px; }
+.article__source { margin: 28px 0 0; font-size: 14px; color: var(--color-text-muted); overflow-wrap: anywhere; }
+@media (min-width: 768px) {
+  .article { padding-top: 24px; padding-bottom: 8px; }
+  .article__title { font-size: 36px; }
+}

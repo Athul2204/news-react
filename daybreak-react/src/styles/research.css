@@ -1,0 +1,88 @@
+/* ==========================================================================
+   research.css  -  Research list (cards), "New research" dialog. Pager styles
+   come from news.css. Requires tokens.css.
+   ========================================================================== */
+.research__header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 4px; min-width: 0; }
+.research__header { flex-wrap: wrap; }
+.research__header > div { flex: 1 1 auto; }
+.research__header .news-feed__status { white-space: nowrap; }
+.research__new-long { display: none; }
+@media (min-width: 480px) { .research__new-long { display: inline; } }
+.research__new { display: inline-flex; white-space: nowrap; align-items: center; justify-content: center; gap: 6px; flex: none; width: auto; min-height: 40px; padding: 0 16px; }
+
+.research-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; margin: 16px 0 0; padding: 0; list-style: none; }
+.research-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  height: 100%;
+  box-sizing: border-box;
+  padding: 16px;
+  border: 1.5px solid var(--color-border);
+  border-radius: 14px;
+  background: var(--color-surface);
+}
+.research-card:hover { border-color: var(--color-text-muted); }
+.research-card:focus-within { outline: 3px solid var(--color-focus); outline-offset: 2px; }
+.research-card__top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.research-card__category { display: flex; align-items: center; gap: 6px; margin: 0; font-size: 12px; font-weight: 600; color: var(--color-text-muted); }
+.research-card__category::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: hsl(var(--hue) 75% 55%); }
+.research-card__status { padding: 2px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; background: color-mix(in srgb, var(--color-brand) 12%, transparent); color: var(--color-brand); }
+.research-card__status--progress { background: color-mix(in srgb, #d98a00 16%, transparent); color: #a86800; }
+@media (prefers-color-scheme: dark) { .research-card__status--progress { color: #ffc766; } }
+.research-card__title { margin: 0; font-size: 17px; font-weight: 700; line-height: 1.3; overflow-wrap: anywhere; }
+.research-card__link { color: inherit; text-decoration: none; }
+.research-card__link::after { content: ""; position: absolute; inset: 0; }
+.research-card__summary {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--color-text-muted);
+}
+.research-card__meta { display: flex; flex-wrap: wrap; gap: 2px 12px; margin: auto 0 0; padding-top: 4px; font-size: 12px; color: var(--color-text-muted); }
+
+.research-empty { margin: 24px 0 0; color: var(--color-text-muted); }
+
+/* ---------- New research dialog ---------- */
+.research-dialog {
+  width: min(32rem, calc(100% - 32px));
+  box-sizing: border-box;
+  padding: 24px;
+  border: 1.5px solid var(--color-border);
+  border-radius: 16px;
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+.research-dialog::backdrop { background: rgba(8, 10, 30, 0.55); }
+.research-dialog__title { margin: 0; font-family: var(--font-display); font-size: 20px; font-weight: 800; letter-spacing: -0.01em; }
+.research-dialog__text { margin: 0; font-size: 14px; color: var(--color-text-muted); }
+.research-dialog__textarea { min-height: 100px; padding: 10px 12px; resize: vertical; line-height: 1.5; }
+.research-dialog__actions { display: flex; justify-content: flex-end; gap: 8px; }
+.research-dialog__actions .btn { width: auto; padding: 0 20px; }
+
+@media (min-width: 576px) { .research-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; } }
+@media (min-width: 1100px) { .research-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.research__header .news-feed__status { text-align: left; margin-top: 2px; }
+
+/* ---------- Extra small screens: tighter spacing, header and card wrap cleanly ---------- */
+@media (max-width: 359px) {
+  .research { padding-left: 10px; padding-right: 10px; }
+  .research__header { gap: 8px; }
+  .research__header .news-feed__title { font-size: 20px; }
+  .research__new { flex: 1 1 100%; }
+  .research-grid { gap: 10px; }
+  .research-card { gap: 6px; padding: 12px; border-radius: 12px; }
+  .research-card__top { flex-wrap: wrap; row-gap: 4px; }
+  .research-card__title { font-size: 15px; }
+  .research-card__summary { font-size: 13px; -webkit-line-clamp: 2; }
+  .research-card__meta { gap: 0 10px; }
+  .research .pager { gap: 4px; }
+  .research .pager__btn { min-width: 36px; height: 36px; padding: 0 8px; }
+  .research .pager__btn--icon { width: 36px; }
+  .research .pager__summary { font-size: 12px; }
+}

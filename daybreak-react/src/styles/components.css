@@ -1,0 +1,298 @@
+/* ==========================================================================
+   components.css  -  Named components (BEM: block__element--modifier)
+   Requires tokens.css. Mobile-first: base = extra small, then 576px, 768px.
+
+   Reusable across screens (login, signup, forgot password):
+     Layout     .auth-page  .auth-brand  .auth-panel  .auth-card
+     Form       .form  .form-field  .form-check  .form__error
+     Controls   .btn (--primary, --outline)  .text-link  .password-toggle
+     Misc       .divider  .auth-social  .auth-switch  .splash
+   ========================================================================== */
+
+/* ---------- Base ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+body {
+  margin: 0;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  -webkit-text-size-adjust: 100%;
+}
+:focus-visible { outline: 3px solid var(--color-focus); outline-offset: 2px; }
+
+/* ---------- Splash: brand flash on extra small screens ---------- */
+.splash {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-brand-panel);
+  color: var(--color-on-brand-panel);
+  animation: splash-fade-out var(--splash-fade) ease var(--splash-delay) forwards;
+}
+.splash__logo {
+  font-family: var(--font-display);
+  font-size: 38px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  animation: splash-logo-in 0.5s ease both;
+}
+@keyframes splash-logo-in { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: none; } }
+@keyframes splash-fade-out { to { opacity: 0; visibility: hidden; } }
+
+/* ---------- Page layout ---------- */
+.auth-page { min-height: 100vh; min-height: 100dvh; }
+
+/* ---------- Brand panel (hidden on extra small screens) ---------- */
+.auth-brand {
+  display: none;
+  padding: 32px 24px 40px;
+  border-radius: 0 0 var(--radius-brand-band) var(--radius-brand-band);
+  background: var(--color-brand-panel);
+  color: var(--color-on-brand-panel);
+}
+.auth-brand__logo {
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.auth-brand__body { max-width: 28rem; margin-top: 32px; }
+.auth-brand__headline {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--font-size-brand-headline);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+.auth-brand__text {
+  margin: 16px 0 0;
+  font-size: var(--font-size-brand-text);
+  line-height: 1.6;
+  color: var(--color-on-brand-panel-muted);
+}
+.auth-brand__footnote {
+  display: none;
+  margin: 0;
+  font-size: 14px;
+  color: var(--color-on-brand-panel-muted);
+}
+
+/* ---------- Form side ---------- */
+.auth-panel { padding: 32px var(--space-page-x) 24px; }
+
+.auth-card { width: 100%; max-width: 28rem; margin: 0 auto; }
+.auth-card__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--font-size-card-title);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.auth-card__subtitle {
+  margin: 4px 0 0;
+  font-size: var(--font-size-small);
+  color: var(--color-text-muted);
+}
+
+/* ---------- Form ---------- */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-form-gap);
+  margin-top: var(--space-form-top);
+}
+.form__error { min-height: 18px; margin: 0; font-size: 13px; color: var(--color-error); }
+
+.form-field__label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: var(--font-size-small);
+  font-weight: 600;
+}
+.form-field__label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+.form-field__label-row .form-field__label { margin: 0; }
+.form-field__control { position: relative; }
+.form-field__input {
+  width: 100%;
+  min-height: var(--control-height);
+  padding: 0 12px;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-control);
+  background: var(--color-bg);
+  color: var(--color-text);
+  font: inherit;
+  font-size: var(--font-size-input);
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.form-field__input::placeholder { color: var(--color-text-muted); }
+.form-field__input:focus {
+  outline: none;
+  border-color: var(--color-focus);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-focus) 25%, transparent);
+}
+.form-field__input[aria-invalid="true"] { border-color: var(--color-error); }
+.form-field__input--password { padding-right: 48px; }
+.form-field__error { min-height: 18px; margin: 6px 0 0; font-size: 13px; color: var(--color-error); }
+
+.password-toggle {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  width: 44px;
+  height: 44px;
+  margin-top: -22px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--color-text-muted);
+  cursor: pointer;
+}
+
+.form-check {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: var(--font-size-small);
+  cursor: pointer;
+  user-select: none;
+}
+.form-check__box { width: 20px; height: 20px; accent-color: var(--color-brand); }
+
+/* ---------- Buttons and links ---------- */
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  border: 0;
+  border-radius: var(--radius-control);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+.btn--primary {
+  min-height: var(--button-height);
+  background: var(--color-brand);
+  color: var(--color-on-brand);
+  font-size: 16px;
+}
+.btn--primary:hover { background: var(--color-brand-hover); }
+.btn--primary[disabled] { opacity: 0.7; cursor: progress; }
+.btn--outline {
+  min-height: var(--control-height);
+  border: 1.5px solid var(--color-border);
+  background: transparent;
+  color: var(--color-text);
+  font-size: 15px;
+  font-weight: 500;
+}
+.btn--outline:hover { border-color: var(--color-text-muted); }
+
+.text-link {
+  color: var(--color-brand);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.form-field__label-row .text-link { font-size: var(--font-size-small); }
+
+/* ---------- Divider, social buttons, switch line ---------- */
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: var(--space-divider-y) 0;
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+.divider::before, .divider::after { content: ""; flex: 1; height: 1px; background: var(--color-border); }
+.auth-social { display: flex; flex-direction: column; gap: 12px; }
+.auth-switch {
+  margin: var(--space-switch-top) 0 0;
+  font-size: var(--font-size-small);
+  text-align: center;
+  color: var(--color-text-muted);
+}
+
+/* ==========================================================================
+   Small screens and up (576px+): brand band + card
+   ========================================================================== */
+@media (min-width: 576px) {
+  .splash { display: none; }
+  .auth-brand { display: block; }
+  .auth-panel { margin-top: -24px; padding: 0 var(--space-page-x) 40px; }
+  .auth-card {
+    padding: 24px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-card);
+    background: var(--color-surface);
+  }
+}
+
+/* ==========================================================================
+   Medium screens and up (768px+): split screen
+   ========================================================================== */
+@media (min-width: 768px) {
+  .auth-page { display: grid; grid-template-columns: 1fr 1fr; }
+  .auth-brand {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 56px;
+    border-radius: 0;
+  }
+  .auth-brand__body { margin-top: 0; }
+  .auth-brand__headline { font-size: 48px; }
+  .auth-brand__text { font-size: 16px; }
+  .auth-brand__footnote { display: block; }
+  .auth-panel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 0;
+    padding: 0 56px;
+  }
+  .auth-card { padding: 32px; border: 0; background: transparent; }
+}
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .splash { display: none; }
+  * { transition: none !important; }
+}
+
+/* ==========================================================================
+   Single-column screens (signup, forgot password): form only, no brand panel
+   Use:  <main class="auth-page auth-page--single">
+           <section class="auth-panel auth-panel--solo"> ...
+   ========================================================================== */
+.auth-page--single { display: block; }
+.auth-panel--solo { width: 100%; margin-top: 0; padding-top: 32px; padding-bottom: 32px; }
+
+@media (min-width: 576px) {
+  .auth-panel--solo { margin-top: 0; padding: 40px var(--space-page-x); }
+}
+@media (min-width: 768px) {
+  .auth-page--single { display: flex; align-items: center; justify-content: center; }
+  .auth-panel--solo { padding: 48px 24px; }
+  .auth-panel--solo .auth-card {
+    padding: 32px;
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+  }
+}
+
+/* ---------- Never scroll sideways ---------- */
+html, body { overflow-x: hidden; overflow-x: clip; }

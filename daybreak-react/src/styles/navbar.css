@@ -1,0 +1,228 @@
+/* ==========================================================================
+   navbar.css  -  Fixed top bar (BEM: .app-navbar)
+   Requires tokens.css.
+   Below 768px:  plain icon buttons. Hovering or focusing an icon shows its
+                 label. Below 576px the "Daybreak" wording is hidden and only
+                 the logo icon shows. The logo button toggles the sidebar.
+   768px+:       text links inline in the bar, Log out on the right.
+   ========================================================================== */
+.app-navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 40;
+  box-sizing: border-box;
+  height: calc(var(--navbar-height) + env(safe-area-inset-top, 0px));
+  padding-top: env(safe-area-inset-top, 0px);
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+}
+.app-navbar__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+  padding: 0 var(--space-page-x);
+}
+
+/* ---------- Brand: logo button (sidebar toggle) + wordmark ---------- */
+.app-navbar__brand { display: flex; align-items: center; gap: 4px; }
+.app-navbar__logo-button {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  margin-left: -8px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--color-brand);
+  cursor: pointer;
+}
+.app-navbar__logo-button:disabled { color: var(--color-brand); cursor: default; }
+.app-navbar__logo { display: grid; place-items: center; }
+.app-navbar__logo svg { width: 20px; height: 20px; }
+.app-navbar__brand-name {
+  display: none;                      /* extra small: icon only */
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--color-brand);
+  text-decoration: none;
+}
+
+/* ---------- Menu ---------- */
+.app-navbar__menu { display: flex; align-items: center; gap: 4px; }
+.app-navbar__links { display: flex; gap: 4px; margin: 0; padding: 0; list-style: none; }
+
+.app-navbar__link,
+.app-navbar__logout {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  color: var(--color-text-muted);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+.app-navbar__link:hover,
+.app-navbar__logout:hover { color: var(--color-text); }
+.app-navbar__icon { width: 14px; height: 14px; }
+
+/* Current page: brand color with a short bar under the icon */
+.app-navbar__link--active { color: var(--color-brand); }
+.app-navbar__link--active::after {
+  content: "";
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  bottom: 0;
+  height: 2px;
+  background: var(--color-brand);
+}
+
+/* ---------- Label ---------- */
+.app-navbar__label { font-size: 15px; font-weight: 500; }
+
+/* Below 768px the label is a small tooltip, shown on hover or keyboard focus.
+   It stays in the page (opacity only), so screen readers still read it. */
+@media (max-width: 767px) {
+  .app-navbar__label {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 50%;
+    z-index: 1;
+    padding: 4px 8px;
+    border-radius: 6px;
+    background: var(--color-text);
+    color: var(--color-bg);
+    font-size: 12px;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateX(-50%);
+    transition: opacity 0.15s;
+  }
+  /* Last button: keep the tooltip inside the screen edge */
+  .app-navbar__logout .app-navbar__label { left: auto; right: 0; transform: none; }
+
+  .app-navbar__link:hover .app-navbar__label,
+  .app-navbar__link:focus-visible .app-navbar__label,
+  .app-navbar__logout:hover .app-navbar__label,
+  .app-navbar__logout:focus-visible .app-navbar__label { opacity: 1; }
+}
+
+/* ---------- Small screens (576px+) ---------- */
+@media (min-width: 576px) {
+  .app-navbar__brand-name { display: block; }
+  .app-navbar__logo svg { width: 22px; height: 22px; }
+  .app-navbar__link,
+  .app-navbar__logout { width: 40px; height: 40px; }
+  .app-navbar__icon { width: 18px; height: 18px; }
+}
+
+/* ---------- Medium screens (768px+): text links ---------- */
+@media (min-width: 768px) {
+  .app-navbar__menu { flex: 1; justify-content: space-between; margin-left: 32px; gap: 8px; }
+  .app-navbar__search { margin-left: auto; }
+  .app-navbar__links { gap: 8px; }
+  .app-navbar__icon { display: none; }
+  .app-navbar__link,
+  .app-navbar__logout {
+    display: flex;
+    width: auto;
+    border-radius: var(--radius-control);
+    color: var(--color-text);
+  }
+  .app-navbar__link { height: 40px; padding: 0 12px; }
+  .app-navbar__link:hover { background: var(--color-bg); }
+  .app-navbar__link--active {
+    color: var(--color-brand);
+    background: color-mix(in srgb, var(--color-brand) 10%, transparent);
+  }
+  .app-navbar__link--active::after { display: none; }
+  .app-navbar__logout {
+    height: var(--control-height);
+    padding: 0 16px;
+    border: 1.5px solid var(--color-border);
+  }
+  .app-navbar__logout:hover { border-color: var(--color-text-muted); }
+}
+
+/* Very narrow phones (under 360px): keep the whole navbar on screen */
+@media (max-width: 359px) {
+  .app-navbar__menu, .app-navbar__links { gap: 0; }
+  .app-navbar__link, .app-navbar__logout { width: 30px; height: 30px; }
+}
+
+/* ---------- Search button (a <button> styled like the nav links) ---------- */
+button.app-navbar__link { padding: 0; border: 0; background: transparent; font: inherit; cursor: pointer; }
+@media (min-width: 768px) { button.app-navbar__link { padding: 0 12px; } }
+/* Search open: same highlight as the current-page link (Home is un-highlighted by JS) */
+.app-navbar__link[aria-expanded="true"] { color: var(--color-brand); }
+.app-navbar__link[aria-expanded="true"]::after {
+  content: "";
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  bottom: 0;
+  height: 2px;
+  background: var(--color-brand);
+}
+@media (min-width: 768px) {
+  .app-navbar__link[aria-expanded="true"] { background: color-mix(in srgb, var(--color-brand) 10%, transparent); }
+  .app-navbar__link[aria-expanded="true"]::after { display: none; }
+}
+/* Hide the browser's built-in clear (x) so only our close button shows */
+.app-search__input::-webkit-search-cancel-button,
+.app-search__input::-webkit-search-decoration { -webkit-appearance: none; appearance: none; display: none; }
+.app-search__input::-ms-clear { display: none; }
+
+/* ---------- Search panel: full width, directly below the navbar ---------- */
+.app-search {
+  position: fixed;
+  top: calc(var(--navbar-height) + env(safe-area-inset-top, 0px));
+  left: 0;
+  right: 0;
+  z-index: 39;
+  box-sizing: border-box;
+  padding: 10px 16px;
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+}
+.app-search[hidden] { display: none; }
+.app-search__form { position: relative; display: flex; align-items: center; width: 100%; }
+.app-search__input {
+  box-sizing: border-box;
+  width: 100%;
+  height: var(--control-height, 44px);
+  padding: 0 48px 0 14px;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-control);
+  background: var(--color-bg);
+  color: var(--color-text);
+  font: inherit;
+  font-size: 16px;
+}
+.app-search__input:focus { outline: 3px solid var(--color-focus); outline-offset: 1px; border-color: var(--color-brand); }
+.app-search__close {
+  position: absolute;
+  right: 6px;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--color-text-muted);
+  cursor: pointer;
+}
+.app-search__close:hover { color: var(--color-text); }
+
+/* Switch (theme) button: a <button> styled like the nav links */
+.app-navbar__link[data-theme-toggle] { font: inherit; }

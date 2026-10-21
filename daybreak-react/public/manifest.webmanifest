@@ -1,0 +1,12 @@
+{
+  "name": "Daybreak News",
+  "short_name": "Daybreak",
+  "description": "Your personal news feed, saved stories and research.",
+  "start_url": "/dashboard",
+  "display": "standalone",
+  "background_color": "#f3f4fa",
+  "theme_color": "#2b3be5",
+  "icons": [
+    { "src": "images/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}

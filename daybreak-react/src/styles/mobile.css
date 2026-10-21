@@ -1,0 +1,132 @@
+/* ==========================================================================
+   mobile.css  -  Mobile-first refinements shared by every page.
+   Load LAST (after tokens, components, navbar, sidebar, page styles).
+
+   1. Base: text sizing, tap highlight, no double-tap zoom, safe areas (notches)
+   2. Touch targets: every control is at least 40px (34px on very narrow phones)
+   3. Phone sidebar: icon-only rail with a dimmed backdrop
+   4. Touch devices: no sticky hover tooltips
+   5. Small extras: dialogs, long words, motion preferences, print
+   ========================================================================== */
+
+/* ---------- 1. Base ---------- */
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  scroll-padding-top: calc(var(--navbar-height) + 12px);
+  -webkit-tap-highlight-color: transparent;
+}
+body { overflow-wrap: break-word; }
+a, button, summary, select, label, [role="switch"], [role="button"] { touch-action: manipulation; }
+img, svg, video { max-width: 100%; }
+
+/* Notches / rounded corners: keep content out of the unsafe side areas */
+.app-navbar__bar { padding-left: max(var(--space-page-x), env(safe-area-inset-left)); padding-right: max(var(--space-page-x), env(safe-area-inset-right)); }
+.app-search { padding-left: max(16px, env(safe-area-inset-left)); padding-right: max(16px, env(safe-area-inset-right)); }
+.app-content, .app-footer { padding-right: env(safe-area-inset-right); }
+.app-footer { padding-bottom: max(24px, env(safe-area-inset-bottom)); }
+@media (max-width: 767px) {
+  .app-content { padding-left: env(safe-area-inset-left); }
+  .app-footer { padding-left: max(var(--space-page-x), env(safe-area-inset-left)); }
+}
+/* Offset for the fixed navbar must include the status-bar inset */
+.app-content { padding-top: calc(var(--navbar-height) + env(safe-area-inset-top, 0px)); }
+.app-search { top: calc(var(--navbar-height) + env(safe-area-inset-top, 0px)); }
+
+/* ---------- 2. Touch targets ---------- */
+.app-navbar__logo-button { width: 40px; height: 40px; }
+.app-navbar__link, .app-navbar__logout { width: 40px; height: 40px; }
+@media (min-width: 768px) {
+  .app-navbar__link { width: auto; }
+}
+@media (max-width: 319px) {
+  .app-navbar__logo-button, .app-navbar__link { width: 34px; height: 34px; }
+}
+.password-toggle { min-width: 44px; min-height: 44px; }
+
+/* Inline text links: larger hit area without changing the layout */
+.text-link { padding-block: 10px; margin-block: -10px; }
+
+.form-check__box { min-width: 20px; min-height: 20px; }
+.signup-step__back { min-height: 44px; padding-right: 12px; }
+.pager__btn { min-width: 40px; height: 40px; }
+.pager__btn--icon { width: 44px; }
+
+/* Chips: bigger close target */
+.chip { min-height: 40px; }
+.chip__remove { width: 36px; height: 36px; }
+
+/* Switches: visual size stays, tap area grows */
+.switch::after { content: ""; position: absolute; inset: -9px -6px; }
+
+/* Footer links, card action buttons */
+.app-footer__links a { min-height: 44px; }
+.news-card__action { min-height: 40px; }
+.research-card__link::after, .news-card__link::after { min-height: 44px; }
+
+/* Make sure form controls never trigger iOS zoom-on-focus (needs >= 16px) */
+input, select, textarea { font-size: max(16px, 1em); }
+.form-check input[type="checkbox"] { font-size: inherit; }
+
+/* ---------- 3. Phone sidebar: icon-only rail (labels show as tooltips on hover/keyboard focus) ---------- */
+@media (max-width: 767px) {
+  :root { --sidebar-rail-width: 56px; }
+  .app-sidebar {
+    padding-left: env(safe-area-inset-left);
+    width: calc(var(--sidebar-rail-width) + env(safe-area-inset-left, 0px));
+    overscroll-behavior: contain;
+    overflow-y: auto;
+  }
+  .app-sidebar.is-open { box-shadow: 8px 0 32px rgba(8, 10, 30, 0.3); }
+  .app-sidebar__nav { padding: 8px 0; min-height: 100%; box-sizing: border-box; }
+  .app-sidebar__link { height: 48px; }
+  .app-sidebar__icon { width: 22px; height: 22px; }
+  .app-sidebar__link:active { background: var(--color-bg); }
+}
+
+/* Dimmed backdrop behind the open drawer (element added by sidebar.js) */
+.app-backdrop {
+  position: fixed;
+  top: calc(var(--navbar-height) + env(safe-area-inset-top, 0px));
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 29;
+  background: rgba(8, 10, 30, 0.5);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, visibility 0s linear 0.2s;
+}
+.app-backdrop.is-visible { opacity: 1; visibility: visible; transition: opacity 0.2s ease, visibility 0s; }
+@media (min-width: 768px) { .app-backdrop { display: none; } }
+body.has-drawer { overflow: hidden; }
+
+/* ---------- 4. Labels on small screens ----------
+   Below 768px only the icons show; the label appears as a tooltip on hover or keyboard focus
+   (rules in navbar.css and sidebar.css). From 768px up the labels are normal visible text. */
+@media (max-width: 767px) {
+  .app-navbar__icon { width: 20px; height: 20px; }
+}
+
+/* ---------- 5. Extras ---------- */
+dialog { max-height: calc(100dvh - 32px); overflow-y: auto; overscroll-behavior: contain; }
+dialog:not([open]) { display: none; }
+
+/* Long titles, URLs and unbroken strings never push the page sideways */
+h1, h2, h3, p, li, a { overflow-wrap: anywhere; }
+.chip-list, .source-card__tags { min-width: 0; }
+
+/* Landscape phones: less vertical padding so content stays visible */
+@media (max-height: 480px) and (orientation: landscape) {
+  .auth-card { padding-top: 16px; padding-bottom: 16px; }
+  .app-sidebar__link { height: 40px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+}
+
+@media print {
+  .app-navbar, .app-sidebar, .app-search, .app-backdrop, .app-footer, .pager, .article__save { display: none !important; }
+  .app-content { padding: 0 !important; }
+}

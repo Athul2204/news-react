@@ -1,0 +1,123 @@
+/* ==========================================================================
+   tokens.css  -  Design tokens (colors, type, sizes, spacing, themes)
+   Change the look of the whole app here. Nothing in this file styles an element.
+   Breakpoints used across the project: 576px (small+), 768px (medium+)
+   ========================================================================== */
+
+:root {
+  /* Colors: light theme */
+  --color-bg: #f3f4fa;
+  --color-surface: #ffffff;
+  --color-text: #12142b;
+  --color-text-muted: #5b5f7a;
+  --color-border: #d5d8ea;
+  --color-brand: #2b3be5;
+  --color-brand-hover: #1f2dc4;
+  --color-on-brand: #ffffff;
+  --color-brand-panel: #2b3be5;
+  --color-on-brand-panel: #ffffff;
+  --color-on-brand-panel-muted: #cfd4ff;
+  --color-error: #b42318;
+  --color-focus: #2b3be5;
+
+  /* Typography */
+  --font-display: "Bricolage Grotesque", "Public Sans", system-ui, sans-serif;
+  --font-body: "Public Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-size-small: 13px;
+  --font-size-body: 13px;
+  --font-size-input: 16px;           /* keep at 16px: smaller makes iOS zoom on focus */
+  --font-size-card-title: 20px;
+  --font-size-brand-headline: 24px;
+  --font-size-brand-text: 13px;
+
+  /* Sizes (extra small devices first) */
+  --control-height: 44px;            /* inputs, outline buttons */
+  --button-height: 46px;             /* primary button */
+  --radius-control: 10px;
+  --radius-card: 16px;
+  --radius-brand-band: 20px;
+
+  /* Spacing */
+  --space-page-x: 16px;
+  --space-form-gap: 12px;
+  --space-form-top: 16px;
+  --space-divider-y: 16px;
+  --space-switch-top: 20px;
+
+  /* Splash screen timing */
+  --splash-delay: 1.2s;
+  --splash-fade: 0.45s;
+
+  /* Respect phone notches and system bars */
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* Larger screens: roomier sizes */
+@media (min-width: 576px) {
+  :root {
+    --font-size-small: 14px;
+    --font-size-body: 14px;
+    --font-size-card-title: 24px;
+    --font-size-brand-headline: 34px;
+    --font-size-brand-text: 15px;
+    --control-height: 48px;
+    --button-height: 50px;
+    --radius-brand-band: 28px;
+    --space-page-x: 20px;
+    --space-form-gap: 20px;
+    --space-form-top: 24px;
+    --space-divider-y: 24px;
+    --space-switch-top: 28px;
+  }
+}
+
+/* Dark theme: follows the device unless data-theme="light" is set on <html> */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --color-bg: #0e1022;
+    --color-surface: #171a33;
+    --color-text: #eef0ff;
+    --color-text-muted: #a2a7c8;
+    --color-border: #2c3159;
+    --color-brand: #7b87ff;
+    --color-brand-hover: #98a1ff;
+    --color-on-brand: #0e1022;
+    --color-brand-panel: #171a33;
+    --color-on-brand-panel: #eef0ff;
+    --color-on-brand-panel-muted: #a2a7c8;
+    --color-error: #ff8a80;
+    --color-focus: #98a1ff;
+  }
+}
+:root[data-theme="dark"] {
+  --color-bg: #0e1022;
+  --color-surface: #171a33;
+  --color-text: #eef0ff;
+  --color-text-muted: #a2a7c8;
+  --color-border: #2c3159;
+  --color-brand: #7b87ff;
+  --color-brand-hover: #98a1ff;
+  --color-on-brand: #0e1022;
+  --color-brand-panel: #171a33;
+  --color-on-brand-panel: #eef0ff;
+  --color-on-brand-panel-muted: #a2a7c8;
+  --color-error: #ff8a80;
+  --color-focus: #98a1ff;
+}
+
+/* ---------- App shell sizes (navbar + sidebar) ---------- */
+:root {
+  --navbar-height: 52px;
+  --sidebar-rail-width: 48px;       /* icon-only sidebar on small screens */
+  --sidebar-width: 220px;           /* icons + labels from 768px */
+}
+@media (min-width: 576px) {
+  :root { --navbar-height: 56px; }
+}
+
+/* Very narrow phones (under 360px): tighter page padding */
+@media (max-width: 359px) {
+  :root { --space-page-x: 12px; }
+}

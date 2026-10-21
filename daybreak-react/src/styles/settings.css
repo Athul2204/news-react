@@ -1,0 +1,71 @@
+/* ==========================================================================
+   settings.css  -  Settings page: plain sections, labelled fields with an
+   underline instead of boxes or cards. Uses form/chip styles from components.css
+   and signup.css, then overrides them inside .settings. Requires tokens.css.
+   ========================================================================== */
+.settings { max-width: none; }   /* fields fill the whole main area */
+.settings-card { width: 100%; box-sizing: border-box; }
+
+/* Sections: two separate frosted panels, tinted slightly differently from the page */
+.settings { position: relative; isolation: isolate; }
+.settings::before {                       /* soft color behind the panels so the blur shows */
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(40% 30% at 12% 18%, color-mix(in srgb, var(--color-brand) 22%, transparent), transparent 70%),
+    radial-gradient(35% 28% at 88% 62%, color-mix(in srgb, var(--color-brand) 14%, transparent), transparent 70%);
+}
+.settings-card {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin: 0;
+  padding: 24px 20px;
+  border: 1px solid color-mix(in srgb, var(--color-text) 8%, transparent);
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--color-surface) 55%, transparent);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+}
+.settings .news-feed__header + .settings-card { margin-top: 20px; }
+.settings-card + .settings-card { margin-top: 20px; }
+.settings-card__title { margin: 0; font-family: var(--font-display); font-size: 20px; font-weight: 800; letter-spacing: -0.01em; }
+.settings-card__text { margin: -18px 0 0; font-size: 14px; color: var(--color-text-muted); }
+.settings-card__submit { align-self: stretch; }
+@media (min-width: 768px) { .settings-card__submit { align-self: flex-start; width: auto; min-width: 14rem; } }
+
+/* The second panel (password) gets a slightly different tint than the first */
+.settings-card[data-settings-form="password"] { background: color-mix(in srgb, var(--color-brand) 7%, color-mix(in srgb, var(--color-surface) 55%, transparent)); }
+
+/* Fields: small label above, a single line below (no box) */
+.settings .form-field { gap: 0; }
+.settings .form-field__label { margin-bottom: 2px; font-size: 13px; font-weight: 600; color: var(--color-text-muted); }
+.settings .form-field__input {
+  min-height: 44px;
+  padding: 0 2px;
+  border: 0;
+  border-bottom: 1.5px solid var(--color-border);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.settings .form-field__input:hover { border-bottom-color: var(--color-text-muted); }
+.settings .form-field__input:focus { outline: none; border-bottom-color: var(--color-brand); box-shadow: 0 1.5px 0 0 var(--color-brand); }
+.settings .form-field__input:focus-visible { outline: none; }
+.settings .form-field__input[aria-invalid="true"] { border-bottom-color: var(--color-error); }
+.settings .form-field__input--select { padding-right: 28px; background-position: right 2px center; }
+.settings .form-field__input--password { padding-right: 44px; }
+.settings .password-toggle { right: 0; }
+.settings fieldset.form-field { margin: 0; padding: 0; border: 0; }
+.settings .chip-list { margin-top: 12px; }
+
+.form__success { min-height: 18px; margin: 0; font-size: 14px; font-weight: 500; color: var(--color-brand); }
+.form__success:empty, .settings-card .form__error:empty { display: none; }
+@media (min-width: 768px) {
+  .settings-card { padding: 32px 36px; gap: 28px; }
+  .settings-card__text { margin-top: -22px; }
+}
+@media (max-width: 359px) { .settings-card { padding: 16px 12px; border-radius: 14px; } }
