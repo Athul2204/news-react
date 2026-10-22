@@ -9,7 +9,7 @@ export default function Footer() {
           <li><a href="#">Privacy</a></li>
           <li><a href="#">Terms</a></li>
         </ul>
-        <p className="app-footer__note">&copy; 2026 Daybreak News. All stories shown here are sample content.</p>
+        <p className="app-footer__note">&copy; 2026 Daybreak News. Headlines and summaries are collected from public RSS feeds and link to their original publishers.</p>
       </div>
     </footer>
   );

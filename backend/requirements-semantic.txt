@@ -1,0 +1,4 @@
+# OPTIONAL: AI model for meaning-based categories and similar stories (large download, slower runs).
+# Then run:  python collector.py --semantic
+-r requirements.txt
+sentence-transformers>=2.7

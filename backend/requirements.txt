@@ -1,0 +1,6 @@
+fastapi>=0.110
+uvicorn[standard]>=0.29
+feedparser>=6.0
+beautifulsoup4>=4.12
+numpy>=1.26
+scikit-learn>=1.3

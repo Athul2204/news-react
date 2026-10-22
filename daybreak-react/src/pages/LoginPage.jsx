@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { PasswordField, TextField } from '../components/FormField';
 import { AppleIcon, GoogleIcon } from '../components/Icons';
+import { useAuth } from '../auth/AuthContext';
 import { useForm } from '../hooks/useForm';
 import { useDocumentTitle } from '../hooks/useDocumentTitle';
 
@@ -10,17 +11,17 @@ const VALIDATORS = { email: { rule: 'email' }, password: { rule: 'password' } };
 export default function LoginPage() {
   useDocumentTitle('Log in');
   const navigate = useNavigate();
+  const location = useLocation();
+  const { login } = useAuth();
   const [remember, setRemember] = useState(false);
 
   const form = useForm({
     initial: { email: '', password: '' },
     validators: VALIDATORS,
     onSubmit: async (values) => {
-      // Demo: any valid email and password opens the dashboard.
-      // With a real API, navigate only after it succeeds, and throw an Error to show a message:
-      //   const response = await fetch('/api/login', { method: 'POST', body: JSON.stringify({ ...values, remember }) });
-      //   if (!response.ok) throw new Error('Incorrect email or password.');
-      navigate('/dashboard', { replace: true });
+      // Throws an Error with the server's message (e.g. "Incorrect email or password.") that useForm shows.
+      await login({ email: values.email, password: values.password, remember });
+      navigate(location.state?.from?.pathname || '/dashboard', { replace: true });
     },
   });
 

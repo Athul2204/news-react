@@ -1,9 +1,10 @@
 import { useState } from 'react';
+import { api } from '../lib/api';
+import { useAuth } from '../auth/AuthContext';
 import { COUNTRIES, LANGUAGES, REGIONS, TOPICS } from '../data/options';
 import { PasswordField, SelectField } from '../components/FormField';
 import MultiSelect from '../components/MultiSelect';
 import { useForm } from '../hooks/useForm';
-import { useLocalStorage } from '../hooks/useLocalStorage';
 import { useDocumentTitle } from '../hooks/useDocumentTitle';
 
 const PASSWORD_VALIDATORS = {
@@ -12,12 +13,11 @@ const PASSWORD_VALIDATORS = {
   confirmPassword: { rule: 'confirmPassword', match: 'newPassword' },
 };
 
-/* Preferences (stored in localStorage "daybreak:prefs", pre-filled on load) + password.
-   Replace the onSubmit bodies with your API calls. */
+/* Preferences (saved on your account, pre-filled on load) + password. */
 export default function SettingsPage() {
   useDocumentTitle('Settings');
-  const [prefs, setPrefs] = useLocalStorage('daybreak:prefs', {});
-  const saved = prefs && typeof prefs === 'object' ? prefs : {};
+  const { user, setUser } = useAuth();
+  const saved = user || {};
 
   /* ---------- Preferences ---------- */
   const [languages, setLanguages] = useState(saved.languages || []);
@@ -30,8 +30,8 @@ export default function SettingsPage() {
       region: saved.country && (REGIONS[saved.country] || []).includes(saved.region) ? saved.region : '',
     },
     onSubmit: async (values) => {
-      setPrefs({ country: values.country || '', region: values.region || '', languages, topics });
-      // Example: return fetch('/api/preferences', { method: 'PUT', body: JSON.stringify(prefs) })
+      const updated = await api.put('/me/preferences', { country: values.country || '', region: values.region || '', languages, topics });
+      setUser(updated);
       setPrefsSuccess('Preferences saved.');
     },
   });
@@ -42,10 +42,19 @@ export default function SettingsPage() {
   const passForm = useForm({
     initial: { currentPassword: '', newPassword: '', confirmPassword: '' },
     validators: PASSWORD_VALIDATORS,
-    onSubmit: () => new Promise((resolve, reject) => {
-      // Example: return fetch('/api/password', { method: 'POST', body: JSON.stringify({ currentPassword, newPassword }) })
-      setTimeout(() => reject(new Error('Demo only: connect this form to your change-password API.')), 800);
-    }),
+    onSubmit: async (values) => {
+      try {
+        await api.post('/me/password', { current_password: values.currentPassword, new_password: values.newPassword });
+      } catch (error) {
+        if (error.field === 'current_password') {
+          passForm.setErrors((prev) => ({ ...prev, currentPassword: error.message }));
+          return;
+        }
+        throw error;
+      }
+      ['currentPassword', 'newPassword', 'confirmPassword'].forEach((name) => passForm.setValue(name, ''));
+      setPassSuccess('Password updated. Other devices have been signed out.');
+    },
   });
 
   /* Clear the "saved" message as soon as something changes again */

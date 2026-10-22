@@ -21,6 +21,7 @@ npm run build     # production build in dist/
 | sources.html      | `/sources`       | `pages/SourcesPage.jsx`      |
 | research.html     | `/research`      | `pages/ResearchPage.jsx`     |
 | settings.html     | `/settings`      | `pages/SettingsPage.jsx`     |
+| (new)             | `/insights`      | `pages/InsightsPage.jsx`     |
 
 Pages with the navbar, sidebar and footer render inside `components/AppLayout.jsx`.
 
@@ -38,14 +39,26 @@ Pages with the navbar, sidebar and footer render inside `components/AppLayout.js
 
 localStorage keys are unchanged (`daybreak:theme`, `:saved`, `:related`, `:sources`, `:prefs`, `:research`).
 
-## Connect your backend
+## Backend (added)
 
-- **Login / signup / password**: the `onSubmit` in `LoginPage`, `SignupPage`, `SettingsPage` (throw an `Error` to show a message).
-- **News / research / sources**: swap the imports from `src/data/*` for API calls.
-- **Search**: submitting the search bar fires a `daybreak:search` event on `document` (as before). Listen for it or replace `SearchBar`'s submit handler with a navigation.
-- **Collaboration / Blogging**: placeholder sidebar links (`#`); add routes in `App.jsx` and `Sidebar.jsx`.
+The app now talks to the FastAPI backend in `../backend` (see the main README one level up).
+`vite.config.js` proxies `/api` to `http://127.0.0.1:8000` in development.
+
+| Area | Code |
+| ---- | ---- |
+| API client + token (`localStorage` when "Keep me logged in", else `sessionStorage`) | `lib/api.js`, `lib/token.js` |
+| Login state, route guards | `auth/AuthContext.jsx` (`RequireAuth`, `GuestOnly`) |
+| Login / signup / settings | the three pages call `/api/auth/*` and `/api/me/*` |
+| News feed with category pills | `pages/DashboardPage.jsx`, `components/CategoryTabs.jsx` |
+| Story page: similar stories + "You might like" | `pages/ArticlePage.jsx` |
+| Time spent per story (visible time only) | `hooks/useReadingTimer.js` |
+| Reading insights + history | `pages/InsightsPage.jsx` |
+| Saved stories (per account) | `pages/SavedPage.jsx` |
+
+The category list in `data/options.js` (TOPICS) must match `backend/catalog.py` (CATEGORIES).
+`data/news.js` (the dummy stories) was removed: stories now come from the API.
 
 ## Notes
 
 - `research.css`: the narrow-screen pager overrides are now scoped to `.research .pager…`. Previously each page loaded only its own CSS; with all CSS bundled, unscoped rules would have shrunk the dashboard pager too.
-- There is no auth guard yet (as in the original). Wrap the `AppLayout` route in a protected-route component once you have real login.
+- All signed-in routes are wrapped in `RequireAuth`; `/login` and `/signup` in `GuestOnly`.

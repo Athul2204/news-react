@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { COUNTRIES, LANGUAGES, REGIONS, TOPICS } from '../data/options';
 import { PasswordField, SelectField, TextField } from '../components/FormField';
 import MultiSelect from '../components/MultiSelect';
 import { ChevronLeftIcon } from '../components/Icons';
+import { useAuth } from '../auth/AuthContext';
 import { useForm } from '../hooks/useForm';
 import { useDocumentTitle } from '../hooks/useDocumentTitle';
 
@@ -25,6 +26,8 @@ function defaultLanguage() {
 /* Two-step signup: 1 account, 2 personalization (optional). */
 export default function SignupPage() {
   useDocumentTitle('Create account');
+  const navigate = useNavigate();
+  const { signup } = useAuth();
   const [step, setStep] = useState(1);
   const [languages, setLanguages] = useState(() => [defaultLanguage()]);
   const [topics, setTopics] = useState([]);
@@ -47,13 +50,19 @@ export default function SignupPage() {
   }, [step]);
 
   const submitToApi = (skipOptional) => async (v) => {
-    const payload = { username: v.username, email: v.email, password: v.password };   // the server only needs the password once
+    const payload = { username: v.username, email: v.email, password: v.password, remember: true };   // the server only needs the password once
     if (!skipOptional) Object.assign(payload, { country: v.country, region: v.region, languages, topics });
-    // Example: return fetch('/api/signup', { method: 'POST', body: JSON.stringify(payload) })
-    await new Promise((resolve, reject) => {
-      setTimeout(() => reject(new Error('Demo only: connect this form to your signup API.')), 1200);
-    });
-    return payload;
+    try {
+      await signup(payload);                       // creates the account and signs the reader in
+    } catch (error) {
+      if (error.field && STEP_ONE_FIELDS.includes(error.field)) {   // e.g. email already registered: show it on step 1
+        form.setErrors((prev) => ({ ...prev, [error.field]: error.message }));
+        setStep(1);
+        return;
+      }
+      throw error;
+    }
+    navigate('/dashboard', { replace: true });
   };
 
   /* Step 1: Enter or "Continue" moves to step 2 instead of submitting */

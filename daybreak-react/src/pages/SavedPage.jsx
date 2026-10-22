@@ -1,36 +1,33 @@
-import { NEWS_ITEMS } from '../data/news';
 import NewsCard from '../components/NewsCard';
 import { CloseIcon, PlusIcon } from '../components/Icons';
+import { api } from '../lib/api';
+import { useAsync } from '../hooks/useAsync';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import { useDocumentTitle } from '../hooks/useDocumentTitle';
 
-const RELATED_MAX = 12;
 const onOff = { decode: (raw) => raw === 'on', encode: (v) => (v ? 'on' : 'off') };   // keeps the original "on"/"off" format
 
-const byId = (id) => NEWS_ITEMS.find((n) => n.id === id);
-
-/* Saved stories (ids in localStorage "daybreak:saved", written by the article page) plus
-   optional related stories from the same categories. */
+/* Saved stories (stored per account on the server) plus, if switched on, more stories
+   from the categories of the saved ones. */
 export default function SavedPage() {
   useDocumentTitle('Saved');
-  const [savedRaw, setSaved] = useLocalStorage('daybreak:saved', []);
   const [related, setRelated] = useLocalStorage('daybreak:related', false, onOff);
-  const saved = Array.isArray(savedRaw) ? savedRaw : [];
+  const savedQ = useAsync((signal) => api.get('/saved', { signal }), []);
+  const relatedQ = useAsync((signal) => (related ? api.get('/saved/related', { signal }) : Promise.resolve({ items: [] })), [related]);
 
-  const savedItems = saved.slice().reverse().map(byId).filter(Boolean);   // most recently saved first
+  const savedItems = savedQ.data?.items || [];
+  const relatedItems = relatedQ.data?.items || [];
 
-  /* Related = unsaved stories from the saved stories' categories, newest first */
-  const relatedItems = (() => {
-    if (!related) return [];
-    const cats = new Set(savedItems.map((n) => n.category));
-    return NEWS_ITEMS.filter((n) => cats.has(n.category) && !saved.includes(n.id)).slice(0, RELATED_MAX);
-  })();
-
-  const remove = (id) => setSaved((prev) => (Array.isArray(prev) ? prev : []).filter((x) => x !== id));
-  const add = (id) => setSaved((prev) => {
-    const list = Array.isArray(prev) ? prev : [];
-    return list.includes(id) ? list : [...list, id];
-  });
+  const remove = async (id) => {
+    await api.del(`/saved/${id}`).catch(() => {});
+    savedQ.reload();
+    if (related) relatedQ.reload();
+  };
+  const add = async (id) => {
+    await api.put(`/saved/${id}`).catch(() => {});
+    savedQ.reload();
+    relatedQ.reload();
+  };
 
   return (
     <section className="news-feed" aria-labelledby="saved-title">
@@ -52,9 +49,11 @@ export default function SavedPage() {
         </button>
       </div>
 
+      {savedQ.error ? <p className="saved-empty" role="alert">{savedQ.error.message}</p> : null}
+
       <ul className="news-grid">
         {savedItems.map((n) => (
-          <NewsCard key={n.id} story={n} action={
+          <NewsCard key={n.id} story={n} origin="saved" action={
             <button className="news-card__action news-card__action--icon" type="button"
                     aria-label={`Remove “${n.title}” from saved`} onClick={() => remove(n.id)}>
               <CloseIcon size={16} />
@@ -62,7 +61,7 @@ export default function SavedPage() {
           } />
         ))}
       </ul>
-      <p className="saved-empty" hidden={savedItems.length > 0}>
+      <p className="saved-empty" hidden={savedQ.loading || savedItems.length > 0}>
         You haven’t saved any stories yet. Open a story and press Save to keep it here.
       </p>
 
@@ -70,7 +69,7 @@ export default function SavedPage() {
         <h2 className="saved-subtitle">Related stories</h2>
         <ul className="news-grid">
           {relatedItems.map((n) => (
-            <NewsCard key={n.id} story={n} action={
+            <NewsCard key={n.id} story={n} origin="recommended" action={
               <button className="news-card__action" type="button"
                       aria-label={`Add “${n.title}” to saved`} onClick={() => add(n.id)}>
                 <PlusIcon size={16} />Add to saved
@@ -78,7 +77,7 @@ export default function SavedPage() {
             } />
           ))}
         </ul>
-        <p className="saved-empty" hidden={relatedItems.length > 0}>
+        <p className="saved-empty" hidden={relatedQ.loading || relatedItems.length > 0}>
           {savedItems.length ? 'No related stories to show right now.' : 'Save a story first and related stories will appear here.'}
         </p>
       </div>
